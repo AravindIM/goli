@@ -1,4 +1,4 @@
-# Go Lisp Interpretor
+# Go Lisp Interpreter
 
 
 
