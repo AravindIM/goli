@@ -20,3 +20,7 @@ type Lexer struct {
 func (l Lexer) New(definitions [][]string) Lexer {
 	return Lexer{definitions: definitions, cursor: 0}
 }
+
+func (l Lexer) Advance(step int64) {
+	l.cursor += step
+}
