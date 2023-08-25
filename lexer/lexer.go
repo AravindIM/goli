@@ -13,10 +13,10 @@ type Token struct {
 }
 
 type Lexer struct {
-	definition map[string]string
-	current    int64
+	definitions [][]string
+	cursor      int64
 }
 
-func (l Lexer) New(definition map[string]string) Lexer {
-	return Lexer{definition: make(map[string]string), current: 0}
+func (l Lexer) New(definitions [][]string) Lexer {
+	return Lexer{definitions: definitions, cursor: 0}
 }
