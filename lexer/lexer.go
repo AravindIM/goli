@@ -66,6 +66,12 @@ func (l Lexer) nextToken() (*Token, error) {
 		code = []byte(l.code)
 	}
 
+	for loc := whiteSpace.FindIndex(code); loc != nil; {
+		l.advanceColumn(int64(loc[1] - loc[0] + 1))
+		l.code = l.code[loc[1]+1:]
+		code = []byte(l.code)
+	}
+
 	for _, definition := range l.definitions {
 		code := []byte(l.code)
 		pattern := regexp.MustCompile(`^` + definition.Pattern)
