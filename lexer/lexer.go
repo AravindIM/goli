@@ -56,18 +56,26 @@ func (l Lexer) nextToken() (*Token, error) {
 		return nil, errors.New("Empty")
 	}
 
+	newLine := regexp.MustCompile(`^\n`)
+	whiteSpace := regexp.MustCompile(`^\s+`)
+
+	for loc, code := newLine.FindIndex(code); loc != nil {
+		l.advanceLine(1)
+		l.code = l.code[loc[1] + 1:]
+	}
+
 	for _, definition := range l.definitions {
+		code := []byte(l.code)
 		pattern := regexp.MustCompile(`^` + definition.Pattern)
-		if loc := pattern.FindIndex([]byte(l.code)); loc != nil {
+		if loc := pattern.FindIndex(code); loc != nil {
 			start := l.cursor
 			l.advanceCount(1)
-			l.advanceColumn(int64(loc[0]))
-			code := l.code
-			l.code = l.code[loc[1]:]
+			l.advanceColumn(int64(loc[1] - loc[0] + 1))
+			l.code = l.code[loc[1] + 1:]
 
 			return &Token{
 				Type:   definition.Type,
-				Symbol: code[loc[0]:loc[1]],
+				Symbol: string(code[loc[0]:loc[1]]),
 				Pos: Position{
 					Index: l.count,
 					Start: start,
