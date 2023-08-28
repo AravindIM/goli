@@ -1,7 +1,11 @@
 package main
 
 import (
+	"bufio"
 	"fmt"
+	"log"
+	"os"
+
 	"gitlab.com/AravindIM/goli/lexer"
 )
 
@@ -12,30 +16,40 @@ func main() {
 		{"function", `fn`},
 	}
 	lex := lexer.NewLexer(definitions)
-	var code string
+
+	scanner := bufio.NewScanner(os.Stdin)
 
 Repl:
 	for {
 		fmt.Printf(">")
-		fmt.Scanf("%s", &code)
+
+		scanner.Scan()
+		err := scanner.Err()
+		if err != nil {
+			log.Fatal(err)
+		}
+		code := scanner.Text()
+
 		if code == "(exit)" {
 			break Repl
 		}
+
 		lex.Analyze(code)
+
 	TokenizeLine:
 		for {
 			token, err := lex.NextToken()
 			if err != nil {
 				if err.Error() == "Unmatched" {
-					fmt.Printf("Unmatched token at line %d and column %d\n", token.Pos.Start[0], token.Pos.Start[1])
+					log.Printf("Unmatched token at line %d and column %d\n", token.Pos.Start[0], token.Pos.Start[1])
 					break
 				}
 				if err.Error() == "Empty" {
-					fmt.Printf("Finished Tokenizing\n")
+					log.Printf("Finished Tokenizing\n")
 					break TokenizeLine
 				}
-				fmt.Printf("Token: %s\n", token)
 			}
+			log.Printf("Token: %s\n", token)
 		}
 
 	}
