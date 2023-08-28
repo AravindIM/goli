@@ -74,10 +74,10 @@ func (l *Lexer) NextToken() (*Token, error) {
 		code = []byte(l.code)
 	}
 
-	for loc := whiteSpace.FindIndex(code); len(loc) > 0 && len(l.code) > 0; {
+	loc := whiteSpace.FindIndex(code)
+	if len(loc) > 0 && len(l.code) > 0 {
 		l.advanceColumn(int64(loc[1] - loc[0]))
 		l.code = l.code[loc[1]:]
-		code = []byte(l.code)
 	}
 
 	for _, definition := range l.definitions {
@@ -86,7 +86,7 @@ func (l *Lexer) NextToken() (*Token, error) {
 		if loc := pattern.FindIndex(code); len(loc) > 0 {
 			start := l.cursor
 			l.advanceCount(1)
-			l.advanceColumn(int64(loc[1] - loc[0] + 1))
+			l.advanceColumn(int64(loc[1] - loc[0]))
 			l.code = l.code[loc[1]:]
 
 			return &Token{
