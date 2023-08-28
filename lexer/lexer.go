@@ -71,13 +71,13 @@ func (l *Lexer) NextToken() (*Token, error) {
 
 	for loc := newLine.FindIndex(code); loc != nil; {
 		l.advanceLine(1)
-		l.code = l.code[loc[1]+1:]
+		l.code = l.code[loc[1]:]
 		code = []byte(l.code)
 	}
 
 	for loc := whiteSpace.FindIndex(code); loc != nil; {
-		l.advanceColumn(int64(loc[1] - loc[0] + 1))
-		l.code = l.code[loc[1]+1:]
+		l.advanceColumn(int64(loc[1] - loc[0]))
+		l.code = l.code[loc[1]:]
 		code = []byte(l.code)
 	}
 
@@ -88,7 +88,7 @@ func (l *Lexer) NextToken() (*Token, error) {
 			start := l.cursor
 			l.advanceCount(1)
 			l.advanceColumn(int64(loc[1] - loc[0] + 1))
-			l.code = l.code[loc[1]+1:]
+			l.code = l.code[loc[1]:]
 
 			return &Token{
 				Type:   definition[0],
@@ -106,9 +106,9 @@ func (l *Lexer) NextToken() (*Token, error) {
 	loc := Unmatched.FindIndex(code)
 	start := l.cursor
 	l.advanceCount(1)
-	l.advanceColumn(int64(loc[1] - loc[0] + 1))
+	l.advanceColumn(int64(loc[1] - loc[0]))
 	if loc[1] < len(l.code) {
-		l.code = l.code[loc[1]+1:]
+		l.code = l.code[loc[1]:]
 	}
 
 	return &Token{
