@@ -51,12 +51,12 @@ func (l *Lexer) advanceCount(step int64) {
 }
 
 func (l *Lexer) advanceColumn(step int64) {
-	l.cursor[0] += step
+	l.cursor[1] += step
 }
 
 func (l *Lexer) advanceLine(step int64) {
 	l.cursor[0] += step
-	l.cursor[0] = 0
+	l.cursor[1] = 0
 }
 
 func (l *Lexer) NextToken() (*Token, error) {
