@@ -1,4 +1,4 @@
-package lexer
+package goli
 
 import (
 	"errors"
@@ -24,13 +24,16 @@ type Lexer struct {
 	cursor      [2]int64
 }
 
-func (l Lexer) New(definitions [][2]string, code string) Lexer {
+func (l Lexer) New(definitions [][2]string) Lexer {
 	return Lexer{
-		code:        code,
 		definitions: definitions,
 		count:       0,
 		cursor:      [2]int64{0, 0},
 	}
+}
+
+func (l Lexer) Analyze(code string) {
+	l.code = code
 }
 
 func (l Lexer) advanceCount(step int64) {
