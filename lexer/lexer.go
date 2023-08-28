@@ -17,19 +17,14 @@ type Token struct {
 	Pos    Position
 }
 
-type Definition struct {
-	Type    string
-	Pattern string
-}
-
 type Lexer struct {
 	code        string
-	definitions []Definition
+	definitions [][2]string
 	count       int64
 	cursor      [2]int64
 }
 
-func (l Lexer) New(definitions []Definition, code string) Lexer {
+func (l Lexer) New(definitions [][2]string, code string) Lexer {
 	return Lexer{
 		code:        code,
 		definitions: definitions,
@@ -74,7 +69,7 @@ func (l Lexer) nextToken() (*Token, error) {
 
 	for _, definition := range l.definitions {
 		code := []byte(l.code)
-		pattern := regexp.MustCompile(`^` + definition.Pattern)
+		pattern := regexp.MustCompile(`^` + definition[1])
 		if loc := pattern.FindIndex(code); loc != nil {
 			start := l.cursor
 			l.advanceCount(1)
@@ -82,7 +77,7 @@ func (l Lexer) nextToken() (*Token, error) {
 			l.code = l.code[loc[1]+1:]
 
 			return &Token{
-				Type:   definition.Type,
+				Type:   definition[0],
 				Symbol: string(code[loc[0]:loc[1]]),
 				Pos: Position{
 					Index: l.count,
