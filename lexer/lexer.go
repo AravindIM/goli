@@ -67,15 +67,14 @@ func (l *Lexer) NextToken() (*Token, error) {
 	code := []byte(l.code)
 	newLine := regexp.MustCompile(`^\n`)
 	whiteSpace := regexp.MustCompile(`^\s+`)
-	Unmatched := regexp.MustCompile(`^[^\s]+`)
 
-	for loc := newLine.FindIndex(code); loc != nil; {
+	for loc := newLine.FindIndex(code); len(loc) > 0 && len(l.code) > 0; {
 		l.advanceLine(1)
 		l.code = l.code[loc[1]:]
 		code = []byte(l.code)
 	}
 
-	for loc := whiteSpace.FindIndex(code); loc != nil; {
+	for loc := whiteSpace.FindIndex(code); len(loc) > 0 && len(l.code) > 0; {
 		l.advanceColumn(int64(loc[1] - loc[0]))
 		l.code = l.code[loc[1]:]
 		code = []byte(l.code)
@@ -84,7 +83,7 @@ func (l *Lexer) NextToken() (*Token, error) {
 	for _, definition := range l.definitions {
 		code = []byte(l.code)
 		pattern := regexp.MustCompile(`^` + definition[1])
-		if loc := pattern.FindIndex(code); loc != nil {
+		if loc := pattern.FindIndex(code); len(loc) > 0 {
 			start := l.cursor
 			l.advanceCount(1)
 			l.advanceColumn(int64(loc[1] - loc[0] + 1))
@@ -103,20 +102,13 @@ func (l *Lexer) NextToken() (*Token, error) {
 	}
 
 	code = []byte(l.code)
-	loc := Unmatched.FindIndex(code)
-	start := l.cursor
-	l.advanceCount(1)
-	l.advanceColumn(int64(loc[1] - loc[0]))
-	if loc[1] < len(l.code) {
-		l.code = l.code[loc[1]:]
-	}
 
 	return &Token{
 		Type:   "unmatched",
-		Symbol: string(code[loc[0]:loc[1]]),
+		Symbol: string(code),
 		Pos: Position{
-			Index: l.count,
-			Start: start,
+			Index: l.count + 1,
+			Start: l.cursor,
 			End:   l.cursor,
 		},
 	}, errors.New("Unmatched")
