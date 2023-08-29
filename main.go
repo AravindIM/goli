@@ -15,6 +15,7 @@ func main() {
 		{"l1-end", `\)`},
 		{"l2-start", `\[`},
 		{"l2-end", `\]`},
+		{"string", `".*?"|'.*?'`},
 		{"symbol", `[^\(\)\[\]\s]+`},
 	}
 	lex := lexer.NewLexer(definitions)
