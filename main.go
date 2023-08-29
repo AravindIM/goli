@@ -23,7 +23,7 @@ func main() {
 
 	scanner := bufio.NewScanner(os.Stdin)
 	log.SetFlags(0)
-	log.SetPrefix("lexer:")
+	log.SetPrefix("goli:")
 
 	fmt.Print("Welcome to goli repl!\n")
 	fmt.Print("Type (exit) to exit!\n\n")
@@ -58,7 +58,7 @@ Repl:
 					break TokenizeLine
 				}
 			}
-			log.Printf("%d:%d: <%s>", token.Pos.Start[0], token.Pos.Start[1], token.Type)
+			log.Printf("%d:%d: <%s: %s>", token.Pos.Start[0], token.Pos.Start[1], token.Type, token.Symbol)
 		}
 
 	}
