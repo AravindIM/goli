@@ -21,8 +21,8 @@ func main() {
 	log.SetFlags(0)
 	log.SetPrefix("lexer:")
 
-	fmt.Println("Welcome to goli repl!")
-	fmt.Println("Type (exit) to exit!\n")
+	fmt.Print("Welcome to goli repl!\n")
+	fmt.Print("Type (exit) to exit!\n\n")
 
 Repl:
 	for {
