@@ -11,13 +11,11 @@ import (
 
 func main() {
 	definitions := [][2]string{
-		{"l1-start", `\(`},
-		{"l1-end", `\)`},
-		{"l2-start", `\[`},
-		{"l2-end", `\]`},
+		{"start", `\(`},
+		{"end", `\)`},
 		{"number", `\d+(.\d+)?`},
 		{"string", `".*?"|'.*?'`},
-		{"symbol", `[^\(\)\[\]\s]+`},
+		{"symbol", `[^\(\)\s]+`},
 	}
 	lex := lexer.NewLexer(definitions)
 
