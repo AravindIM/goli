@@ -1,73 +1,72 @@
 package parser
 
 import (
-	"container/list"
 	"log"
+	"reflect"
 
 	"gitlab.com/AravindIM/goli/lexer"
 )
 
-type AstNode interface {
-	Type() string
+type Content interface {
+	Value()
 }
 
-type ListNode struct {
-	Value *AstNode
-	Next  *AstNode
-	Pos   lexer.Position
+type Symbol string
+
+func (s Symbol) Value() string {
+	return string(s)
 }
 
-func (n ListNode) Type() string {
-	return "list"
+type String string
+
+func (s String) Value() string {
+	return string(s)
 }
 
-type StringNode struct {
-	Value string
-	Pos   lexer.Position
+type Number float64
+
+func (n Number) Value() float64 {
+	return float64(n)
 }
 
-func (n StringNode) Type() string {
-	return "string"
+type AstNode struct {
+	Value  *Content
+	Pos    lexer.Position
+	Parent *AstNode
+	Next   *AstNode
 }
 
-type NumberNode struct {
-	Value string
-	Pos   lexer.Position
-}
-
-func (n NumberNode) Type() string {
-	return "number"
+func (n AstNode) Type() reflect.Type {
+	return reflect.TypeOf(n)
 }
 
 func Parse(lex lexer.Lexer) {
-	stack := list.New()
-	s := stack.Back()
+	var curr AstNode
 
 	log.SetFlags(0)
 	log.SetPrefix("goli:")
 
-TokenizeLine:
 	for {
 		token, err := lex.NextToken()
 		if err != nil {
 			if err.Error() == "Unmatched" {
-				break
+				return
 			}
 			if err.Error() == "Empty" {
-				break TokenizeLine
+				break
 			}
 		}
 		if token.Type == "start" {
-			node := &ListNode{
+			curr.Next = &ListNode{
 				Pos: lexer.Position{
 					Start: token.Pos.Start,
 				},
 			}
-			stack.PushBack(node)
+			curr = curr.Next
 		}
 
 		if token.Type == "string" {
-			listNode := s.Prev()
+			prev := curr.Parent
 			listNode.Value = &StringNode{
 				Value: token.Symbol,
 				Pos:   token.Pos,
