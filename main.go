@@ -7,6 +7,7 @@ import (
 	"os"
 
 	"gitlab.com/AravindIM/goli/lexer"
+	"gitlab.com/AravindIM/goli/parser"
 )
 
 func main() {
@@ -42,22 +43,9 @@ Repl:
 		}
 
 		lex.Analyze(code)
-
-	TokenizeLine:
-		for {
-			token, err := lex.NextToken()
-			if err != nil {
-				if err.Error() == "Unmatched" {
-					log.Printf("%d:%d: Unmatched token", token.Pos.Start[0], token.Pos.Start[1])
-					break
-				}
-				if err.Error() == "Empty" {
-					log.Printf(" Success!\n")
-					break TokenizeLine
-				}
-			}
-			log.Printf("%d:%d: <%s: %s>", token.Pos.Start[0], token.Pos.Start[1], token.Type, token.Symbol)
+		err = parser.Parse(lex)
+		if err != nil {
+			log.Printf(err.Error())
 		}
-
 	}
 }
