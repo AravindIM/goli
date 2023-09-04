@@ -29,6 +29,12 @@ func Parse(lex lexer.Lexer) {
 		case "start":
 			current = NewListNode("list", parent)
 			break
+		case "end":
+			current = nil
+			if parent != nil {
+				parent = parent.Parent()
+			}
+			break
 		case "symbol":
 			current = NewElementNode("symbol", parent)
 			current.SetElement(token.Symbol)
@@ -43,16 +49,18 @@ func Parse(lex lexer.Lexer) {
 			break
 		}
 
-		if parent != nil {
-			parent.SetList(current)
-		}
+		if current != nil {
+			if parent != nil {
+				parent.SetList(current)
+			}
 
-		if current != nil && current.IsList() {
-			parent = current
-		}
+			if current.IsList() {
+				parent = current
+			}
 
-		if previous != nil {
-			previous.SetNext(current)
+			if previous != nil {
+				previous.SetNext(current)
+			}
 		}
 
 		previous = current
