@@ -1,24 +1,21 @@
 package parser
 
 import (
-	"log"
+	"errors"
 
 	"gitlab.com/AravindIM/goli/lexer"
 )
 
-func Parse(lex lexer.Lexer) {
+func Parse(lex *lexer.Lexer) error {
 	var parent *AstNode
 	var previous *AstNode
 	var current *AstNode
-
-	log.SetFlags(0)
-	log.SetPrefix("goli:")
 
 	for {
 		token, err := lex.NextToken()
 		if err != nil {
 			if err.Error() == "Unmatched" {
-				return
+				return errors.New("Unmatched symbol found")
 			}
 			if err.Error() == "Empty" {
 				break
@@ -66,4 +63,9 @@ func Parse(lex lexer.Lexer) {
 		previous = current
 	}
 
+	if parent != nil {
+		return errors.New("Missing closing of list")
+	}
+
+	return nil
 }
