@@ -28,22 +28,27 @@ func Parse(lex *lexer.Lexer) error {
 			break
 		case "end":
 			current = nil
-			if parent != nil {
-				parent = parent.Parent()
+			if parent == nil {
+				return errors.New("Extra list closing found")
 			}
+			parent = parent.Parent()
 			break
 		case "symbol":
 			current = NewElementNode("symbol", parent)
-			current.SetElement(token.Symbol)
+			err = current.SetElement(token.Symbol)
 			break
 		case "string":
 			current = NewElementNode("string", parent)
-			current.SetElement(token.Symbol)
+			err = current.SetElement(token.Symbol)
 			break
 		case "number":
 			current = NewElementNode("number", parent)
-			current.SetElement(token.Symbol)
+			err = current.SetElement(token.Symbol)
 			break
+		}
+
+		if err != nil {
+			return err
 		}
 
 		if current != nil {

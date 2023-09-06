@@ -1,6 +1,10 @@
 package parser
 
-import "gitlab.com/AravindIM/goli/lexer"
+import (
+	"errors"
+
+	"gitlab.com/AravindIM/goli/lexer"
+)
 
 type AstNode struct {
 	ntype    string
@@ -40,20 +44,25 @@ func (n AstNode) List() *AstNode {
 	return n.list
 }
 
-func (n *AstNode) SetList(list *AstNode) {
-	if n.isList == true {
-		n.list = list
+func (n *AstNode) SetList(list *AstNode) error {
+	if !n.isList {
+		return errors.New("Not a list!")
 	}
+
+	n.list = list
+	return nil
 }
 
 func (n AstNode) Element() string {
 	return n.element
 }
 
-func (n *AstNode) SetElement(element string) {
-	if n.isList == false {
-		n.element = element
+func (n *AstNode) SetElement(element string) error {
+	if n.isList {
+		return errors.New("Not an Element!")
 	}
+	n.element = element
+	return nil
 }
 
 func (n AstNode) Position() lexer.Position {
