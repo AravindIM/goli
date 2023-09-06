@@ -19,6 +19,7 @@ func main() {
 		{"symbol", `[^\(\)\s]+`},
 	}
 	lex := lexer.NewLexer(definitions)
+	par := parser.NewParser()
 
 	scanner := bufio.NewScanner(os.Stdin)
 	log.SetFlags(0)
@@ -43,9 +44,17 @@ Repl:
 		}
 
 		lex.Analyze(code)
-		err = parser.Parse(lex)
-		if err != nil {
-			log.Printf(err.Error())
+		par.Parse(lex)
+	ParseLoop:
+		for {
+			ast, err := par.NextExpression()
+			if err != nil {
+				log.Printf(err.Error())
+				break ParseLoop
+			}
+			if ast == nil {
+				break ParseLoop
+			}
 		}
 	}
 }

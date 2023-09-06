@@ -6,16 +6,33 @@ import (
 	"gitlab.com/AravindIM/goli/lexer"
 )
 
-func Parse(lex *lexer.Lexer) error {
+type Parser struct {
+	lex *lexer.Lexer
+}
+
+func NewParser() *Parser {
+	return new(Parser)
+}
+
+func (p *Parser) Parse(lex *lexer.Lexer) {
+	p.lex = lex
+}
+
+func (p *Parser) NextExpression() (*AstNode, error) {
 	var parent *AstNode
 	var previous *AstNode
 	var current *AstNode
 
+	if p.lex == nil {
+		return nil, errors.New("Lexer was not found!")
+	}
+
+ParseLoop:
 	for {
-		token, err := lex.NextToken()
+		token, err := p.lex.NextToken()
 		if err != nil {
 			if err.Error() == "Unmatched" {
-				return errors.New("Unmatched symbol found")
+				return nil, errors.New("Unmatched symbol found")
 			}
 			if err.Error() == "Empty" {
 				break
@@ -27,11 +44,14 @@ func Parse(lex *lexer.Lexer) error {
 			current = NewListNode("list", parent)
 			break
 		case "end":
-			current = nil
 			if parent == nil {
-				return errors.New("Extra list closing found")
+				return nil, errors.New("Extra list closing found")
 			}
 			parent = parent.Parent()
+			if parent == nil {
+				break ParseLoop
+			}
+			current = nil
 			break
 		case "symbol":
 			current = NewElementNode("symbol", parent)
@@ -48,7 +68,7 @@ func Parse(lex *lexer.Lexer) error {
 		}
 
 		if err != nil {
-			return err
+			return nil, err
 		}
 
 		if current != nil {
@@ -65,12 +85,16 @@ func Parse(lex *lexer.Lexer) error {
 			}
 		}
 
+		if parent == nil {
+			break
+		}
+
 		previous = current
 	}
 
 	if parent != nil {
-		return errors.New("Missing closing of list")
+		return nil, errors.New("Missing closing of list")
 	}
 
-	return nil
+	return current, nil
 }
