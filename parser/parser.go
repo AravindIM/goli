@@ -43,7 +43,7 @@ func Parse(lex *lexer.Lexer) (*Ast, error) {
 			list = list.Parent()
 			break
 		case "symbol":
-			current := NewElementNode("symbol", token.Symbol, list)
+			current := NewSymbolNode("symbol", token.Symbol, list)
 			if list != nil {
 				list.Push(current)
 			} else {
@@ -51,7 +51,7 @@ func Parse(lex *lexer.Lexer) (*Ast, error) {
 			}
 			break
 		case "string":
-			current := NewElementNode("string", token.Symbol, list)
+			current := NewSymbolNode("string", token.Symbol, list)
 			if list != nil {
 				list.Push(current)
 			} else {
@@ -59,7 +59,7 @@ func Parse(lex *lexer.Lexer) (*Ast, error) {
 			}
 			break
 		case "number":
-			current := NewElementNode("number", token.Symbol, list)
+			current := NewSymbolNode("number", token.Symbol, list)
 			if list != nil {
 				list.Push(current)
 			} else {

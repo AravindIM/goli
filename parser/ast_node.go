@@ -10,7 +10,7 @@ type AstNode struct {
 	ntype    string
 	isList   bool
 	list     *AstNode
-	element  string
+	symbol   string
 	position lexer.Position
 	parent   *AstNode
 	next     *AstNode
@@ -24,12 +24,12 @@ func NewListNode(ntype string, parent *AstNode) *AstNode {
 	}
 }
 
-func NewElementNode(ntype string, symbol string, parent *AstNode) *AstNode {
+func NewSymbolNode(ntype string, symbol string, parent *AstNode) *AstNode {
 	return &AstNode{
-		ntype:   ntype,
-		isList:  false,
-		parent:  parent,
-		element: symbol,
+		ntype:  ntype,
+		isList: false,
+		parent: parent,
+		symbol: symbol,
 	}
 }
 
@@ -67,8 +67,8 @@ func (n *AstNode) Pop() (*AstNode, error) {
 	return node, nil
 }
 
-func (n AstNode) Element() string {
-	return n.element
+func (n AstNode) Symbol() string {
+	return n.symbol
 }
 
 func (n AstNode) Position() lexer.Position {
