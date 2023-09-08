@@ -6,30 +6,17 @@ import (
 	"gitlab.com/AravindIM/goli/lexer"
 )
 
-type Parser struct {
-	lex *lexer.Lexer
-}
+func Parse(lex *lexer.Lexer) (*Ast, error) {
+	var list *AstNode
 
-func NewParser() *Parser {
-	return new(Parser)
-}
+	ast := NewAst()
 
-func (p *Parser) Parse(lex *lexer.Lexer) {
-	p.lex = lex
-}
-
-func (p *Parser) NextExpression() (*AstNode, error) {
-	var parent *AstNode
-	var previous *AstNode
-	var current *AstNode
-
-	if p.lex == nil {
+	if lex == nil {
 		return nil, errors.New("Lexer was not found!")
 	}
 
-ParseLoop:
 	for {
-		token, err := p.lex.NextToken()
+		token, err := lex.NextToken()
 		if err != nil {
 			if err.Error() == "Unmatched" {
 				return nil, errors.New("Unmatched symbol found")
@@ -41,60 +28,50 @@ ParseLoop:
 
 		switch token.Type {
 		case "start":
-			current = NewListNode("list", parent)
+			current := NewListNode("list", list)
+			if list != nil {
+				list.Push(current)
+			} else {
+				ast.appendExpression(current)
+			}
+			list = current
 			break
 		case "end":
-			if parent == nil {
+			if list == nil {
 				return nil, errors.New("Extra list closing found")
 			}
-			parent = parent.Parent()
-			if parent == nil {
-				break ParseLoop
-			}
-			current = nil
+			list = list.Parent()
 			break
 		case "symbol":
-			current = NewElementNode("symbol", parent)
-			err = current.SetElement(token.Symbol)
+			current := NewElementNode("symbol", token.Symbol, list)
+			if list != nil {
+				list.Push(current)
+			} else {
+				ast.appendExpression(current)
+			}
 			break
 		case "string":
-			current = NewElementNode("string", parent)
-			err = current.SetElement(token.Symbol)
+			current := NewElementNode("string", token.Symbol, list)
+			if list != nil {
+				list.Push(current)
+			} else {
+				ast.appendExpression(current)
+			}
 			break
 		case "number":
-			current = NewElementNode("number", parent)
-			err = current.SetElement(token.Symbol)
+			current := NewElementNode("number", token.Symbol, list)
+			if list != nil {
+				list.Push(current)
+			} else {
+				ast.appendExpression(current)
+			}
 			break
 		}
-
-		if err != nil {
-			return nil, err
-		}
-
-		if current != nil {
-			if parent != nil {
-				parent.SetList(current)
-			}
-
-			if current.IsList() {
-				parent = current
-			}
-
-			if previous != nil {
-				previous.SetNext(current)
-			}
-		}
-
-		if parent == nil {
-			break
-		}
-
-		previous = current
 	}
 
-	if parent != nil {
+	if list != nil {
 		return nil, errors.New("Missing closing of list")
 	}
 
-	return current, nil
+	return ast, nil
 }

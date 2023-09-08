@@ -1,94 +1,24 @@
 package parser
 
-import (
-	"errors"
-
-	"gitlab.com/AravindIM/goli/lexer"
-)
-
-type AstNode struct {
-	ntype    string
-	isList   bool
-	list     *AstNode
-	element  string
-	position lexer.Position
-	parent   *AstNode
-	next     *AstNode
+type Ast struct {
+	root *AstNode
+	tail *AstNode
 }
 
-func NewListNode(ntype string, parent *AstNode) *AstNode {
-	return &AstNode{
-		ntype:  ntype,
-		isList: true,
-		parent: parent,
+func NewAst() *Ast {
+	return new(Ast)
+}
+
+func (a Ast) Root() *AstNode {
+	return a.root
+}
+
+func (a *Ast) appendExpression(expr *AstNode) {
+	if a.root == nil {
+		a.root = expr
+		a.tail = expr
+	} else {
+		a.tail.SetNext(expr)
+		a.tail = expr
 	}
-}
-
-func NewElementNode(ntype string, parent *AstNode) *AstNode {
-	return &AstNode{
-		ntype:  ntype,
-		isList: false,
-		parent: parent,
-	}
-}
-
-func (n AstNode) Type() string {
-	return n.ntype
-}
-
-func (n AstNode) IsList() bool {
-	return n.isList
-}
-
-func (n AstNode) List() *AstNode {
-	return n.list
-}
-
-func (n *AstNode) SetList(list *AstNode) error {
-	if !n.isList {
-		return errors.New("Not a list!")
-	}
-
-	n.list = list
-	return nil
-}
-
-func (n AstNode) Element() string {
-	return n.element
-}
-
-func (n *AstNode) SetElement(element string) error {
-	if n.isList {
-		return errors.New("Not an Element!")
-	}
-	n.element = element
-	return nil
-}
-
-func (n AstNode) Position() lexer.Position {
-	return n.position
-}
-
-func (n *AstNode) SetStart(start [2]int64) {
-	n.position.Start = start
-}
-
-func (n *AstNode) SetEnd(end [2]int64) {
-	n.position.End = end
-}
-
-func (n AstNode) Parent() *AstNode {
-	return n.parent
-}
-
-func (n *AstNode) SetParent(parent *AstNode) {
-	n.parent = parent
-}
-
-func (n AstNode) Next() *AstNode {
-	return n.next
-}
-
-func (n *AstNode) SetNext(next *AstNode) {
-	n.next = next
 }
