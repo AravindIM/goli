@@ -21,10 +21,10 @@ This is a lisp interpreter made in golang
 Mail me at aravindim@disroot.org
 
 ## Roadmap
-[-] Lexer
-[] Parser
-[] Executor
-[] VM
+- [x] Lexer
+- [x] Parser
+- [ ] Compiler
+- [ ] VM
 
 ## Contributing
 - This project is open for contributions from community
