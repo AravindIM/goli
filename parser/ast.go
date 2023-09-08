@@ -1,8 +1,11 @@
 package parser
 
+import "errors"
+
 type Ast struct {
-	root *AstNode
-	tail *AstNode
+	root    *AstNode
+	tail    *AstNode
+	current *AstNode
 }
 
 func NewAst() *Ast {
@@ -21,4 +24,15 @@ func (a *Ast) appendExpression(expr *AstNode) {
 		a.tail.SetNext(expr)
 		a.tail = expr
 	}
+}
+
+func (a *Ast) nextExpression() (*AstNode, error) {
+	if a.current == nil {
+		a.current = a.root
+	} else if a.current.Next() != nil {
+		a.current = a.current.Next()
+	} else {
+		return nil, errors.New("No new expression found")
+	}
+	return a.current, nil
 }
