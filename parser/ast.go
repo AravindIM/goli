@@ -11,7 +11,7 @@ func NewAst() *Ast {
 	return new(Ast)
 }
 
-func (a *Ast) appendExpression(expr *AstNode) {
+func (a *Ast) AppendExpression(expr *AstNode) {
 	if a.head == nil {
 		a.head = expr
 		a.tail = expr
@@ -21,7 +21,7 @@ func (a *Ast) appendExpression(expr *AstNode) {
 	}
 }
 
-func (a *Ast) nextExpression() (*AstNode, error) {
+func (a *Ast) NextExpression() (*AstNode, error) {
 	if a.head == nil {
 		return nil, errors.New("No new expression found")
 	}

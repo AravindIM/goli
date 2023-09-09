@@ -32,7 +32,7 @@ func Parse(lex *lexer.Lexer) (*Ast, error) {
 			if list != nil {
 				list.Push(current)
 			} else {
-				ast.appendExpression(current)
+				ast.AppendExpression(current)
 			}
 			list = current
 			break
@@ -47,7 +47,7 @@ func Parse(lex *lexer.Lexer) (*Ast, error) {
 			if list != nil {
 				list.Push(current)
 			} else {
-				ast.appendExpression(current)
+				ast.AppendExpression(current)
 			}
 			break
 		case "string":
@@ -55,7 +55,7 @@ func Parse(lex *lexer.Lexer) (*Ast, error) {
 			if list != nil {
 				list.Push(current)
 			} else {
-				ast.appendExpression(current)
+				ast.AppendExpression(current)
 			}
 			break
 		case "number":
@@ -63,7 +63,7 @@ func Parse(lex *lexer.Lexer) (*Ast, error) {
 			if list != nil {
 				list.Push(current)
 			} else {
-				ast.appendExpression(current)
+				ast.AppendExpression(current)
 			}
 			break
 		}
