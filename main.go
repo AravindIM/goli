@@ -6,6 +6,7 @@ import (
 	"log"
 	"os"
 
+	"gitlab.com/AravindIM/goli/compiler"
 	"gitlab.com/AravindIM/goli/lexer"
 	"gitlab.com/AravindIM/goli/parser"
 )
@@ -43,9 +44,11 @@ Repl:
 		}
 
 		lex.Analyze(code)
-		_, err = parser.Parse(lex)
+		ast, err := parser.Parse(lex)
 		if err != nil {
 			log.Printf(err.Error())
+		} else {
+			compiler.Compile(ast)
 		}
 	}
 }
