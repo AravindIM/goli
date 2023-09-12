@@ -26,6 +26,8 @@ func Compile(ast *parser.Ast) {
 				expr, _ = list.Pop()
 				if expr == nil {
 					expr = list.Parent()
+					length, _ := list.Length()
+					fmt.Printf("SET SIZE=%d\n", length)
 					fmt.Printf("CALL\n")
 				}
 			}

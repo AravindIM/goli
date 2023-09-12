@@ -10,6 +10,7 @@ type AstNode struct {
 	ntype    string
 	isList   bool
 	list     *AstNode
+	length   int64
 	symbol   string
 	position lexer.Position
 	parent   *AstNode
@@ -41,6 +42,13 @@ func (n AstNode) IsList() bool {
 	return n.isList
 }
 
+func (n AstNode) Length() (int64, error) {
+	if !n.IsList() {
+		return 0, errors.New("Not a list!")
+	}
+	return n.length, nil
+}
+
 func (n *AstNode) Push(node *AstNode) error {
 	if !n.IsList() {
 		return errors.New("Not a list!")
@@ -52,6 +60,7 @@ func (n *AstNode) Push(node *AstNode) error {
 		node.next = n.list
 		n.list = node
 	}
+	n.length += 1
 	return nil
 }
 
