@@ -42,7 +42,7 @@ func (n AstNode) IsList() bool {
 }
 
 func (n *AstNode) Push(node *AstNode) error {
-	if !n.isList {
+	if !n.IsList() {
 		return errors.New("Not a list!")
 	}
 	if n.list == nil {
@@ -56,7 +56,7 @@ func (n *AstNode) Push(node *AstNode) error {
 }
 
 func (n *AstNode) Pop() (*AstNode, error) {
-	if !n.isList {
+	if !n.IsList() {
 		return nil, errors.New("Not a list!")
 	}
 	if n.list == nil {
@@ -67,8 +67,11 @@ func (n *AstNode) Pop() (*AstNode, error) {
 	return node, nil
 }
 
-func (n AstNode) Symbol() string {
-	return n.symbol
+func (n AstNode) Symbol() (string, error) {
+	if n.IsList() {
+		return "", errors.New("Symbol cannot be called on a list")
+	}
+	return n.symbol, nil
 }
 
 func (n AstNode) Position() lexer.Position {
