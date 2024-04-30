@@ -18,7 +18,7 @@ This is a lisp interpreter made in golang
   ```
 
 ## Support
-Mail me at aravindim@disroot.org
+Mail me at aravindim@yahoo.com
 
 ## Roadmap
 - [x] Lexer
